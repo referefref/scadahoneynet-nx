@@ -1,0 +1,65 @@
+
+=== ADAM 6500
+
+No tcp, udp, or ICMP scantype specified, assuming SYN Stealth scan. Use -sP if you really don't want to portscan (and just want to see what hosts are up).
+
+Starting nmap 3.27 ( www.insecure.org/nmap/ ) at 2003-09-08 08:37 CDT
+Host 192.168.2.65 appears to be up ... good.
+Initiating SYN Stealth Scan against 192.168.2.65 at 08:37
+The SYN Stealth Scan took 74 seconds to scan 1623 ports.
+Warning:  OS detection will be MUCH less reliable because we did not find at least 1 open and 1 closed TCP port
+All 1623 scanned ports on 192.168.2.65 are: filtered
+Too many fingerprints match this host for me to give an accurate OS guess
+TCP/IP fingerprint:
+SInfo(V=3.27%P=i686-pc-linux-gnu%D=9/8%Time=3F5C865E%O=-1%C=-1)
+T5(Resp=N)
+T6(Resp=N)
+T7(Resp=N)
+PU(Resp=N)
+
+
+
+Nmap run completed -- 1 IP address (1 host up) scanned in 91.322 seconds
+
+
+=== Modicon
+Nmap's OSDetect=======================
+
+Starting nmap 3.48 ( http://www.insecure.org/nmap/ ) at 2004-02-14 07:03 CST
+Host 192.168.2.1 appears to be up ... good.
+Initiating SYN Stealth Scan against 192.168.2.1 at 07:03
+Adding open port 80/tcp
+Adding open port 23/tcp
+Adding open port 21/tcp
+Adding open port 502/tcp
+Adding open port 111/tcp
+The SYN Stealth Scan took 3 seconds to scan 1657 ports.
+For OSScan assuming that port 21 is open and port 1 is closed and neither are firewalled
+Interesting ports on 192.168.2.1:
+(The 1652 ports scanned but not shown below are in state: closed)
+PORT    STATE SERVICE
+21/tcp  open  ftp
+23/tcp  open  telnet
+80/tcp  open  http
+111/tcp open  rpcbind
+502/tcp open  asa-appl-proto
+Device type: firewall|switch|WAP
+Running: SonicWall embedded, Enterasys embedded, Cisco embedded
+OS details: SonicWall SOHO firewall, Enterasys Matrix E1, or Accelerated Networks VoDSL, o
+r Cisco 360 Access Point
+OS Fingerprint:
+TSeq(Class=64K%IPID=I%TS=U)
+T1(Resp=Y%DF=N%W=2000%ACK=S++%Flags=AS%Ops=MNW)
+T2(Resp=N)
+T3(Resp=Y%DF=N%W=2000%ACK=O%Flags=A%Ops=)
+T4(Resp=Y%DF=N%W=2000%ACK=O%Flags=R%Ops=)
+T5(Resp=Y%DF=N%W=0%ACK=S++%Flags=AR%Ops=)
+T6(Resp=Y%DF=N%W=0%ACK=O%Flags=R%Ops=)
+T7(Resp=Y%DF=N%W=0%ACK=S%Flags=AR%Ops=)
+PU(Resp=Y%DF=N%TOS=0%IPLEN=38%RIPTL=148%RID=E%RIPCK=0%UCK=0%ULEN=134%DAT=E)
+
+TCP Sequence Prediction: Class=64K rule
+                         Difficulty=1 (Trivial joke)
+TCP ISN Seq. Numbers: 8FF49DBD 8FF597BD 8FF691BD 8FF97FBD 8FFA79BD 8FFB73BD
+IPID Sequence Generation: Incremental
+

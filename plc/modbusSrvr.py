@@ -16,9 +16,8 @@
 #! /usr/bin/python2
 
 import string, socket, struct, thread, os
-from modbusHdrs import *
 from struct import *
-from time import gmtime, strftime
+from time import *
 
 # Response comes from the source port 502, so all the packets
 # that this scripts gets should be queries which are destinated
@@ -230,7 +229,7 @@ class modbusSrvr:
 
     def writeLog(self,string):    
         fileobject = open(self.logFile, 'a')
-        fileobject.write("Scadahoneynet, Modbus simulation Log" +":"+(time.strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) +":"+ string +"\n"))
+        fileobject.write("Scadahoneynet, Modbus simulation Log" +":"+(strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) +":"+ string +"\n"))
         fileobject.close()
     
 

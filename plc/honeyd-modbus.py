@@ -15,16 +15,11 @@
 
 #! /usr/bin/python2
 
-import string, socket, struct, thread, os
+import string, socket, struct, thread, os,sys
 from struct import *
 from time import *
 
-# Response comes from the source port 502, so all the packets
-# that this scripts gets should be queries which are destinated
-# to port 502.
 
-HOST = "127.0.0.1"
-ModbusPort = 502
 
 class modbusSrvr:
     
@@ -51,42 +46,17 @@ class modbusSrvr:
 
     logFile = "/var/log/scadahoneynet.log"
 
-    def listen(self):
-        data = '\x00'
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.bind((HOST, ModbusPort))
-            s.listen(1)
-        except socket.error, msg:
-            self.writeLog("Socket Error: %s" %(msg))
-
-        while 1:
-            conn, addr = s.accept()
-            self.writeLog("Got a connect from %s from port %d" %(addr[0],addr[1]))
-            self.modbusConn = conn            
-            thread.start_new_thread(self.handleConnection, (data,conn))
-
-
-    def handleConnection(self, data,conn):
-         while 1:
-
-            try:
-                data = conn.recv(512)
-
-                # Send control to implementCommands from here
-                self.processData(data,conn)
-
-            except socket.error, msg:
-                conn.close()
-                self.writeLog("Socket Error: %s" %(msg))
-                break
-            
-    def processData(self, data,conn):
+    def getModbus(self):
+        data=sys.stdin.read()
+        self.writeLog("here1")
+        self.processData(data)
+        
+    def processData(self, data):
 
         datalen = data.__len__()
         self.dataLen = hex(datalen)
         headers1 = struct.unpack(datalen*'b',data)
-        #print headers1
+
 
         datalen = datalen - 8 # Removing the 'hhhb' part 
         
@@ -105,10 +75,11 @@ class modbusSrvr:
 
         self.writeLog("Got functionCode:%d\n" %(self.funcCode))
         
-        self.sendResponse(data,conn,self.funcCode)
+        self.sendResponse(data,self.funcCode)
             
-
-    def sendResponse(self,data,conn,code):
+    # Only implemented codes are 1,3 and 16.  For everything else,
+    # error response would be sent.
+    def sendResponse(self,data,code):
 
         # read_coils(1),read_input_discretes(2),
         # read_mult_regs(3),read_input_regs (4),write_coil(5),
@@ -142,12 +113,14 @@ class modbusSrvr:
 
             temphdr = struct.pack('BBB',self.unitID, self.funcCode, byteCount)
             packetLen = temphdr.__len__() + byteCount
-            #print "here 2", packetLen, byteCount
+
 
             #Packet length screwed up
             rcr = struct.pack('hhhBBhh',self.transID, self.protoID, packetLen, self.unitID,self.funcCode,self.refNum,byteCount)
-            
-            conn.send(rcr+Data)
+
+                        
+            sys.stdout.write(rcr+Data)
+            sys.stdout.flush()
             
 
         elif(code == 3):
@@ -197,8 +170,10 @@ class modbusSrvr:
 
 
             wmr = struct.pack('hhhbbhh',self.transID, self.protoID, packetLen, self.unitID,self.funcCode,self.refNum,self.wordCount)
-            
-            conn.send(wmr)
+
+                        
+            sys.stdout.write(wmr)
+            sys.stdout.flush()
 
         else:
 
@@ -225,17 +200,15 @@ class modbusSrvr:
 
             funcException = struct.pack('hhhBBB',self.transID, self.protoID, packetLen, self.unitID,self.funcCode,illegalFunc)
             
-            conn.send(funcException)
+            sys.stdout.write(funcException)
+            sys.stdout.flush()
 
     def writeLog(self,string):    
         fileobject = open(self.logFile, 'a')
         fileobject.write("Scadahoneynet, Modbus simulation Log" +":"+(strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) +":"+ string +"\n"))
         fileobject.close()
-    
+
 
     def main(self):
-        
-        self.listen()
-
+        self.getModbus()
 modbusSrvr().main()
-

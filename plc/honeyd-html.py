@@ -1,6 +1,10 @@
-#! /opt/local/bin/python2.1
+#! /usr/bin/python3
 
-import cgi,smtplib,sys,re
+import smtplib,sys,re
+
+# Python 3: pass bytes through unchanged and keep the client's line endings, as Python 2 did
+sys.stdin.reconfigure(encoding='latin-1', newline='')
+sys.stdout.reconfigure(encoding='latin-1', newline='')
 
 # Mail information, to get mail whenever the page is accessed.
 mailer="email.blah.com"
@@ -80,13 +84,13 @@ GetSlashResponse2= "HTTP/1.1 200 OK\n Date: Thu, 14 Jul 2005 11:26:45 GMT\n Serv
 data=sys.stdin.readline()
 
 if(re.compile('Diag', re.IGNORECASE).search(data)):
-    print DiagnosticPage
+    print(DiagnosticPage)
 elif(re.compile('Prot', re.IGNORECASE).search(data)):
-    print ProtocolPage
+    print(ProtocolPage)
 elif(re.compile('Stat', re.IGNORECASE).search(data)):
-    print StatPage
+    print(StatPage)
 else:
-    print MainPage
+    print(MainPage)
 
 # Uncoment if you want to get mail.
 #mailing = smtplib.SMTP(mailer)

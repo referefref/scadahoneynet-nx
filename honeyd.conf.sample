@@ -1,0 +1,10 @@
+# Sample Honeyd configuration from the SCADA HoneyNet 0.3 release notes (python3 instead of python).
+# Replace IP with an address routed to Honeyd and run Honeyd from the directory that holds plc/.
+create template
+set template uptime 1728650
+set template maxfds 35
+add template tcp port 21 "python3 plc/honeyd-ftpd.py"
+add template tcp port 23 "python3 plc/honeyd-telnet.py"
+add template tcp port 502 "python3 plc/honeyd-modbus.py"
+add template tcp port 80 "python3 plc/honeyd-html.py"
+bind IP template

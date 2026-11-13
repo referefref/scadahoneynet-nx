@@ -13,9 +13,9 @@
 # (Version 0.1, Venkat Pothamsetty, vpothams@cisco.com)
 
 
-#! /usr/bin/python2
+#! /usr/bin/python3
 
-import string, socket, struct, thread, os,sys
+import string, socket, struct, os,sys
 from struct import *
 from time import *
 
@@ -25,21 +25,21 @@ class modbusSrvr:
     
     # Default class values, will fillup when we receive the packet,
     # This class variable method may not work if threaded.
-    transID = '\x00\x00'
-    protoID = '\x00\x00'
+    transID = b'\x00\x00'
+    protoID = b'\x00\x00'
     
     # We need to fill this length while sending the packet
-    modbusLen = '\x00'
+    modbusLen = b'\x00'
     
-    unitID = '\x00'
-    funcCode = '\x00'
-    refNum = '\x00\x00'
-    wordCount = '\x00\x00'
-    bitCount = '\x00\x00'
+    unitID = b'\x00'
+    funcCode = b'\x00'
+    refNum = b'\x00\x00'
+    wordCount = b'\x00\x00'
+    bitCount = b'\x00\x00'
     
     # Data, the length will be different too
-    Data = '\x00\x00'
-    dataLen = '\x00'
+    Data = b'\x00\x00'
+    dataLen = b'\x00'
 
     modbusTCPHdr = transID+protoID
     modbusHdr=unitID+funcCode
@@ -47,7 +47,7 @@ class modbusSrvr:
     logFile = "/var/log/scadahoneynet.log"
 
     def getModbus(self):
-        data=sys.stdin.read()
+        data=sys.stdin.buffer.read()
         self.writeLog("here1")
         self.processData(data)
         
@@ -107,8 +107,8 @@ class modbusSrvr:
             self.refNum = headers[5]
             self.bitCount = headers[6]
 
-            Data = (self.bitCount/8)*'\x00'
-            byteCount = self.bitCount/8
+            Data = (self.bitCount//8)*b'\x00'
+            byteCount = self.bitCount//8
 
 
             temphdr = struct.pack('BBB',self.unitID, self.funcCode, byteCount)
@@ -119,7 +119,7 @@ class modbusSrvr:
             rcr = struct.pack('hhhBBhh',self.transID, self.protoID, packetLen, self.unitID,self.funcCode,self.refNum,byteCount)
 
                         
-            sys.stdout.write(rcr+Data)
+            sys.stdout.buffer.write(rcr+Data)
             sys.stdout.flush()
             
 
@@ -172,7 +172,7 @@ class modbusSrvr:
             wmr = struct.pack('hhhbbhh',self.transID, self.protoID, packetLen, self.unitID,self.funcCode,self.refNum,self.wordCount)
 
                         
-            sys.stdout.write(wmr)
+            sys.stdout.buffer.write(wmr)
             sys.stdout.flush()
 
         else:
@@ -200,7 +200,7 @@ class modbusSrvr:
 
             funcException = struct.pack('hhhBBB',self.transID, self.protoID, packetLen, self.unitID,self.funcCode,illegalFunc)
             
-            sys.stdout.write(funcException)
+            sys.stdout.buffer.write(funcException)
             sys.stdout.flush()
 
     def writeLog(self,string):    

@@ -16,7 +16,11 @@
 # (Version 0.1, Venkat Pothamsetty, vpothams@cisco.com)
 
 
-import socket,re,string,thread,time,sys,os
+import socket,re,string,time,sys,os
+
+# Python 3: pass bytes through unchanged and keep the client's line endings, as Python 2 did
+sys.stdin.reconfigure(encoding='latin-1', newline='')
+sys.stdout.reconfigure(encoding='latin-1', newline='')
 
 
 # The default response.
@@ -49,9 +53,9 @@ class HoneyTelnetd:
         
         elif (re.compile('cd', re.IGNORECASE).search(data)):#Password
             self.writeLog("Got a cd command")
-            f=string.splitfields(data,' ')
+            f=data.split(' ')
             PWD = f[1]
-            self.CommandLine=string.rstrip(self.CommandLine+" " + PWD)
+            self.CommandLine=(self.CommandLine+" " + PWD).rstrip()
             return
         
         if(re.compile('help', re.IGNORECASE).search(data)):

@@ -16,7 +16,11 @@
 # (Version 0.1, Venkat Pothamsetty, vpothams@cisco.com)
 
 
-import socket,re,string,thread,time,sys,os
+import socket,re,string,time,sys,os
+
+# Python 3: pass bytes through unchanged and keep the client's line endings, as Python 2 did
+sys.stdin.reconfigure(encoding='latin-1', newline='')
+sys.stdout.reconfigure(encoding='latin-1', newline='')
 
 ListCommandResponse = "150 Opening BINARY mode data connection\ndrwx------  1 user          ftp\n"
 
@@ -86,7 +90,7 @@ class HoneyFTPd:
 
         elif (re.compile('cwd', re.IGNORECASE).search(data)):#Password
             self.writeLog("Got a cwd command")
-            f=string.splitfields(data,' ')
+            f=data.split(' ')
             directory = f[1]
             sys.stdout.write('250 Changed directory %s \r\n' %(directory))# The command says the the username and password are OK
             sys.stdout.flush()
@@ -97,9 +101,9 @@ class HoneyFTPd:
             #sys.stdout.write('200 Port set OK\r\n') #After this you need to connect back to the port and listen for a command.  Convert each of the last numbers to hex and combine the two hexnumbers, convert the combined hex number to decimal and you should get the port number.#m,n=(hex(int(f[4])),hex(int(f[5]))
             sys.stdout.write("425 Cant build data connection: Connection Timeout\r\n")
             sys.stdout.flush()
-            f=string.splitfields(data,',')
+            f=data.split(',')
             m,n=(hex(int(f[4])),hex(int(f[5])))
-            x,y = (string.splitfields(m,'x'),string.splitfields(n,'x'))
+            x,y = (m.split('x'),n.split('x'))
             s='0x'+x[1]+y[1]
             port = int(s,16)
             self.PORTport = port
